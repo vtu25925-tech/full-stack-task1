@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Order History</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .table-container { max-width: 800px; margin: auto; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { padding: 12px; border: 1px solid #ddd; text-align: left; }
+        th { background-color: #343a40; color: white; }
+        .highlight-highest { background-color: #d4edda; font-weight: bold; }
+        .highlight-active { color: #0056b3; font-weight: bold; }
+        .badges { display: flex; gap: 10px; margin-bottom: 10px; }
+        .badge { padding: 8px; border-radius: 4px; font-size: 14px; }
+        .badge.green { background: #d4edda; color: #155724; }
+        .badge.blue { background: #cce5ff; color: #004085; }
+    </style>
+</head>
+<body>
+    <div class="table-container">
+        <h2>Customer Order History Dashboard</h2>
+        <div class="badges">
+            <div class="badge blue">Most Active Customer: <b>Emma Watson</b></div>
+            <div class="badge green">Highest Value Order: <b>#ORD-992</b></div>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Order ID</th>
+                    <th>Customer Name</th>
+                    <th>Product</th>
+                    <th>Total Value</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>#ORD-990</td>
+                    <td class="highlight-active">Emma Watson</td>
+                    <td>Wireless Mouse</td>
+                    <td>$25.00</td>
+                </tr>
+                <tr>
+                    <td>#ORD-991</td>
+                    <td>John Doe</td>
+                    <td>Mechanical Keyboard</td>
+                    <td>$85.00</td>
+                </tr>
+                <tr class="highlight-highest">
+                    <td>#ORD-992</td>
+                    <td class="highlight-active">Emma Watson</td>
+                    <td>Gaming Monitor (4K)</td>
+                    <td>$450.00</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

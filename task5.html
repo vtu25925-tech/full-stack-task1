@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Payment Simulation</title>
+    <style>
+        body { font-family: Arial, sans-serif; display: flex; justify-content: center; padding: 50px; background: #f8f9fa;}
+        .wallet-card { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); width: 350px; text-align: center; }
+        .balance { font-size: 24px; color: #28a745; font-weight: bold; margin-bottom: 20px; }
+        input { width: calc(100% - 22px); padding: 10px; margin-bottom: 15px; text-align: center; font-size: 16px; }
+        .btn { width: 100%; padding: 12px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; }
+        .log { margin-top: 15px; font-size: 14px; padding: 10px; border-radius: 4px; display: none; }
+        .success { background: #d4edda; color: #155724; display: block; }
+        .error { background: #f8d7da; color: #721c24; display: block; }
+    </style>
+</head>
+<body>
+    <div class="wallet-card">
+        <h2>Your Wallet</h2>
+        <div class="balance">Current Balance: $<span id="balanceAmt">500.00</span></div>
+        <p>Pay Merchant: <b>TechStore Inc.</b></p>
+        
+        <input type="number" id="payAmount" placeholder="Enter amount to pay" value="100">
+        <button class="btn" onclick="processPayment()">Process Payment</button>
+        
+        <div id="statusLog" class="log"></div>
+    </div>
+
+    <script>
+        let balance = 500.00;
+
+        function processPayment() {
+            const amount = parseFloat(document.getElementById("payAmount").value);
+            const statusLog = document.getElementById("statusLog");
+
+            statusLog.className = "log"; 
+            statusLog.style.display = "block";
+            statusLog.innerText = "Processing transaction...";
+
+            setTimeout(() => {
+                // Simulate checking balance and committing transaction
+                if (amount > balance) {
+                    // Simulate ROLLBACK
+                    statusLog.className = "log error";
+                    statusLog.innerHTML = "<b>Transaction Failed (ROLLBACK):</b> Insufficient funds.";
+                } else if (amount <= 0 || isNaN(amount)) {
+                    statusLog.className = "log error";
+                    statusLog.innerHTML = "<b>Error:</b> Invalid amount.";
+                } else {
+                    // Simulate COMMIT
+                    balance -= amount;
+                    document.getElementById("balanceAmt").innerText = balance.toFixed(2);
+                    statusLog.className = "log success";
+                    statusLog.innerHTML = `<b>Success (COMMIT):</b> Deducted $${amount.toFixed(2)}.<br>Merchant account credited.`;
+                }
+            }, 1000); // 1-second delay to simulate network/database time
+        }
+    </script>
+</body>
+</html>

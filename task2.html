@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Data Dashboard</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; background: #f4f7f6; }
+        .dashboard { background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { padding: 12px; border: 1px solid #ddd; text-align: left; }
+        th { background-color: #007bff; color: white; cursor: pointer; }
+        .controls { display: flex; justify-content: space-between; margin-bottom: 20px; }
+        .stats { font-weight: bold; color: #333; }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <h2>Student Records Dashboard</h2>
+        <div class="controls">
+            <div>
+                <label>Filter by Dept: </label>
+                <select id="deptFilter" onchange="renderTable()">
+                    <option value="All">All</option>
+                    <option value="CS">Computer Science (CS)</option>
+                    <option value="IT">Information Tech (IT)</option>
+                </select>
+            </div>
+            <div class="stats" id="countDisplay">Total Students: 0</div>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th onclick="sortTable('name')">Name ⇕</th>
+                    <th>Department</th>
+                    <th onclick="sortTable('date')">Enrollment Date ⇕</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody"></tbody>
+        </table>
+    </div>
+
+    <script>
+        let students = [
+            { name: "Alice Smith", dept: "CS", date: "2023-08-15" },
+            { name: "Bob Johnson", dept: "IT", date: "2023-09-01" },
+            { name: "Charlie Davis", dept: "CS", date: "2023-07-20" }
+        ];
+
+        let currentSort = { key: 'name', asc: true };
+
+        function renderTable() {
+            const filter = document.getElementById("deptFilter").value;
+            let filtered = students.filter(s => filter === "All" || s.dept === filter);
+            
+            // Sort logic
+            filtered.sort((a, b) => {
+                let valA = a[currentSort.key], valB = b[currentSort.key];
+                if (valA < valB) return currentSort.asc ? -1 : 1;
+                if (valA > valB) return currentSort.asc ? 1 : -1;
+                return 0;
+            });
+
+            const tbody = document.getElementById("tableBody");
+            tbody.innerHTML = "";
+            filtered.forEach(s => {
+                tbody.innerHTML += `<tr><td>${s.name}</td><td>${s.dept}</td><td>${s.date}</td></tr>`;
+            });
+
+            document.getElementById("countDisplay").innerText = `Total Showing: ${filtered.length}`;
+        }
+
+        function sortTable(key) {
+            if (currentSort.key === key) currentSort.asc = !currentSort.asc;
+            else { currentSort.key = key; currentSort.asc = true; }
+            renderTable();
+        }
+
+        // Initial render
+        renderTable();
+    </script>
+</body>
+</html>

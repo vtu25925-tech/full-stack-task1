@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Interactive Feedback Form</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            background: #f4f7f6; 
+            display: flex; 
+            justify-content: center; 
+            padding: 50px; 
+        }
+        .form-container { 
+            background: #fff; 
+            padding: 30px; 
+            border-radius: 8px; 
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1); 
+            width: 100%; 
+            max-width: 450px; 
+        }
+        .form-container h2 { 
+            text-align: center; 
+            color: #333; 
+        }
+        .form-group { 
+            margin-bottom: 20px; 
+        }
+        .form-group label { 
+            display: block; 
+            margin-bottom: 5px; 
+            color: #666; 
+            font-weight: bold;
+        }
+        .form-group input, .form-group textarea { 
+            width: 100%; 
+            padding: 10px; 
+            border: 2px solid #ccc; 
+            border-radius: 4px; 
+            box-sizing: border-box; 
+            transition: border-color 0.3s, background-color 0.3s;
+        }
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        .error-text {
+            color: #dc3545;
+            font-size: 13px;
+            margin-top: 5px;
+            display: block;
+            min-height: 15px;
+        }
+        .btn { 
+            width: 100%; 
+            padding: 12px; 
+            background: #17a2b8; 
+            color: white; 
+            border: none; 
+            border-radius: 4px; 
+            cursor: pointer; 
+            font-size: 16px; 
+            transition: background 0.3s;
+        }
+        .btn:hover { 
+            background: #138496; 
+        }
+        #successMessage {
+            display: none;
+            background: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 4px;
+            text-align: center;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="form-container">
+        <h2>Customer Feedback</h2>
+        <form id="feedbackForm">
+            <div class="form-group">
+                <label for="name">Full Name</label>
+                <input type="text" id="name" placeholder="Enter your name">
+                <span class="error-text" id="nameError"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" placeholder="Enter your email">
+                <span class="error-text" id="emailError"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="feedback">Your Feedback</label>
+                <textarea id="feedback" placeholder="Let us know what you think..."></textarea>
+                <span class="error-text" id="feedbackError"></span>
+            </div>
+
+            <button type="button" id="submitBtn" class="btn">Double-Click to Submit</button>
+        </form>
+
+        <div id="successMessage">
+            <strong>Thank you!</strong> Your feedback has been submitted successfully.
+        </div>
+    </div>
+
+    <script>
+        // 1. Reusable Validation Function
+        function validateInput(value, type) {
+            if (value.trim() === "") {
+                return "This field cannot be empty.";
+            }
+            if (type === "email") {
+                const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailPattern.test(value)) {
+                    return "Please enter a valid email address.";
+                }
+            }
+            if (type === "name" && value.length < 3) {
+                return "Name must be at least 3 characters long.";
+            }
+            return ""; // Empty string means validation passed
+        }
+
+        // 2. Validate inputs on keypress (keyup)
+        const inputs = [
+            { id: 'name', errorId: 'nameError', type: 'name' },
+            { id: 'email', errorId: 'emailError', type: 'email' },
+            { id: 'feedback', errorId: 'feedbackError', type: 'text' }
+        ];
+
+        inputs.forEach(field => {
+            const inputElement = document.getElementById(field.id);
+            const errorElement = document.getElementById(field.errorId);
+
+            inputElement.addEventListener('keyup', function() {
+                const errorMessage = validateInput(this.value, field.type);
+                errorElement.innerText = errorMessage;
+                
+                // Visual cue for validation state
+                if (errorMessage) {
+                    this.style.borderColor = "#dc3545"; // Red for error
+                } else {
+                    this.style.borderColor = "#28a745"; // Green for success
+                }
+            });
+        });
+
+        // 3. Highlight fields on mouse hover using JS Events
+        const allFormFields = document.querySelectorAll('input, textarea');
+        
+        allFormFields.forEach(field => {
+            field.addEventListener('mouseenter', function() {
+                // Only highlight if it's not currently showing an error/success state
+                if (this.style.borderColor !== "rgb(220, 53, 69)" && this.style.borderColor !== "rgb(40, 167, 69)") {
+                    this.style.borderColor = "#007bff";
+                    this.style.backgroundColor = "#f8f9fa";
+                }
+            });
+
+            field.addEventListener('mouseleave', function() {
+                // Remove highlight background, keep validation border colors if they exist
+                this.style.backgroundColor = "";
+                if (this.style.borderColor === "rgb(0, 123, 255)") {
+                    this.style.borderColor = "#ccc";
+                }
+            });
+        });
+
+        // 4. Show confirmation on double-click submit
+        document.getElementById('submitBtn').addEventListener('dblclick', function() {
+            let isValid = true;
+
+            // Final validation check before submitting
+            inputs.forEach(field => {
+                const inputElement = document.getElementById(field.id);
+                const errorElement = document.getElementById(field.errorId);
+                const errorMessage = validateInput(inputElement.value, field.type);
+                
+                if (errorMessage) {
+                    errorElement.innerText = errorMessage;
+                    inputElement.style.borderColor = "#dc3545";
+                    isValid = false;
+                }
+            });
+
+            if (isValid) {
+                // Hide the form and show the success message
+                document.getElementById('feedbackForm').style.display = 'none';
+                document.getElementById('successMessage').style.display = 'block';
+            } else {
+                alert("Please fix the errors in the form before submitting.");
+            }
+        });
+    </script>
+
+</body>
+</html>
